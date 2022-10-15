@@ -21,7 +21,7 @@ function promiseQueue(promiseArr, concurrentNum){
 
 
     function promiseSettled(v) {
-        if(i >= promiseArr.length) return;
+        // if(i >= promiseArr.length) return; //这行有问题，所有的添加到running，不见得都运行完成了
         const [idx, result] = v
         finished[idx] = result;
         console.log(`promiseArr[${idx}] settled! ${i}`)
@@ -30,6 +30,8 @@ function promiseQueue(promiseArr, concurrentNum){
         //后面是完成一个，进一个。一个萝卜一个坑，所以，running的长度不重要了
         //再放置一个进去 TODO：下一个位置怎么获取
         //从全局i可以获取下一个promise
+
+        if(i >= promiseArr.length) return; //放这里就行了
         const promise = promiseArr[i++]
         .then(promiseSettled)
         .catch(promiseSettled)
