@@ -15,12 +15,16 @@ function promiseQueue(promiseArr, concurrentNum){
             const [idx, result] = v
             finished[idx] = result;
             //running 删除对应位置的promise， TODO： 对应位置怎么获取
+            //running 的位置没有固定规则，考虑到running在初始化是最多concurrentNum个
+            //后面是完成一个，进一个。一个萝卜一个坑，所以，running的长度不重要了
             //再放置一个进去 TODO：下一个位置怎么获取
         })
         .catch(v => {
             const [idx, result] = v
             finished[idx] = result; 
             //running 删除对应位置的promise， TODO： 对应位置怎么获取
+            //running 的位置没有固定规则，考虑到running在初始化是最多concurrentNum个
+            //后面是完成一个，进一个。一个萝卜一个坑，所以，running的长度不重要了
             //再放置一个进去 TODO：下一个位置怎么获取
         })
         running.push(promise)
