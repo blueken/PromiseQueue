@@ -12,12 +12,14 @@ function promiseQueue(promiseArr, concurrentNum){
     for(var i=0; i<Math.min(concurrentNum, promiseArr.length); i++){
         const promise = promiseArr[i]
         .then(v => {
-            finished.push(v) //TODO： 放进去了，目前是按返回时间先后随机存储的 ，需按 promiseArr idx 对应存放结果
+            const [idx, result] = v
+            finished[idx] = result;
             //running 删除对应位置的promise， TODO： 对应位置怎么获取
             //再放置一个进去 TODO：下一个位置怎么获取
         })
         .catch(v => {
-            finished.push(v) //TODO： 放进去了，目前是按返回时间先后随机存储的 ，需按 promiseArr idx 对应存放结果
+            const [idx, result] = v
+            finished[idx] = result; 
             //running 删除对应位置的promise， TODO： 对应位置怎么获取
             //再放置一个进去 TODO：下一个位置怎么获取
         })
@@ -31,13 +33,14 @@ function promiseQueue(promiseArr, concurrentNum){
 //test
 function genPromise(n){
     return new Promise((res, rej) => {
-        setTimeout(res, n*100, n);
+        const rnd = Math.random();
+        setTimeout(rnd > 0.5 ? res : rej, n*100, [n, `url${n}`]); // 此处改造 onFulfill 和 onReject方法的接受参数为数组
     })
 }
 var promiseArr = [
-    genPromise(2),
+    genPromise(0),
     genPromise(1),
-    genPromise(3)
+    genPromise(2)
 ]
 let t = promiseQueue(promiseArr)
 console.dir(t)
