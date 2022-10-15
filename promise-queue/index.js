@@ -21,12 +21,16 @@ function promiseQueue(promiseArr, concurrentNum){
         //3.循环2，直到finished跟promiseArr长度一致，放回finished
         function promiseSettled(v) {
             // if(i >= promiseArr.length) return; //这行有问题，所有的添加到running，不见得都运行完成了
+            console.log(`promiseSettled: ${v}`)
             const [idx, result] = v
-            finished[idx] = result;
-            console.log(`promiseArr[${idx}] settled! ${i}`)
+
+            // finished[idx] = result; 数组不连续，长度不准确
+            finished.push({
+                idx,
+                result
+            })
             //这里是所有promise都settled的地方
             if(finished.length >= promiseArr.length) {
-                console.log(`@@@ all settled ${finished}`);
                 res(finished);
             } 
             //running 删除对应位置的promise， TODO： 对应位置怎么获取
@@ -48,18 +52,21 @@ function promiseQueue(promiseArr, concurrentNum){
 function genPromise(n){
     return new Promise((res, rej) => {
         const rnd = Math.random();
-        setTimeout(rnd > 0.5 ? res : rej, n*100, [n, `url ${n} ${rnd > 0.5 ? 'successfully' : 'failed'}`]); // 此处改造 onFulfill 和 onReject方法的接受参数为数组
-    }).then(v => v).catch(v => v)
+        setTimeout(rnd > 0.5 ? res : rej, n*1000, [n, `url ${n} ${rnd > 0.5 ? 'successfully' : 'failed'}`]); // 此处改造 onFulfill 和 onReject方法的接受参数为数组
+    }).catch(v => v)
 }
 var promiseArr = [
     genPromise(0),
-    genPromise(1),
-    genPromise(3),
-    genPromise(2)
+    genPromise(10),
+    genPromise(2),
+    genPromise(7),
+    genPromise(8),
+    genPromise(12),
+    genPromise(4)
 ]
 let t = promiseQueue(promiseArr,2)
 t.then(v => {
     for(let item of v){
-        console.log(`${item}`)
+        console.log(`${item.idx} -> ${item.result}`)
     }
 })
