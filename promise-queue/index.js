@@ -24,14 +24,15 @@ function promiseQueue(promiseArr, concurrentNum){
         if(i >= promiseArr.length) return;
         const [idx, result] = v
         finished[idx] = result;
+        console.log(`promiseArr[${idx}] settled! ${i}`)
         //running 删除对应位置的promise， TODO： 对应位置怎么获取
         //running 的位置没有固定规则，考虑到running在初始化是最多concurrentNum个
         //后面是完成一个，进一个。一个萝卜一个坑，所以，running的长度不重要了
         //再放置一个进去 TODO：下一个位置怎么获取
         //从全局i可以获取下一个promise
         const promise = promiseArr[i++]
-            .then(promiseSettled)
-            .catch(promiseSettled)
+        .then(promiseSettled)
+        .catch(promiseSettled)
         running.push(promise)
     }
 
@@ -43,12 +44,13 @@ function genPromise(n){
     return new Promise((res, rej) => {
         const rnd = Math.random();
         setTimeout(rnd > 0.5 ? res : rej, n*100, [n, `url${n}`]); // 此处改造 onFulfill 和 onReject方法的接受参数为数组
-    })
+    }).then(v => v).catch(v => v)
 }
 var promiseArr = [
     genPromise(0),
     genPromise(1),
+    genPromise(3),
     genPromise(2)
 ]
-let t = promiseQueue(promiseArr)
+let t = promiseQueue(promiseArr,2)
 console.dir(t)
